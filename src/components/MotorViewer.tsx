@@ -443,7 +443,7 @@ export default function MotorViewer() {
                   transition-all duration-300 transform hover:scale-105 active:scale-95
                   shadow-lg flex items-center justify-center gap-2 min-w-[140px]
                   ${isMotorRunning 
-                    ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-red-500/50' 
+                    ? 'bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-400 text-white shadow-red-500/50' 
                     : 'bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white shadow-green-500/50'
                   }
                 `}
