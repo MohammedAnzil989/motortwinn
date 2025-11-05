@@ -38,7 +38,7 @@ import "./globals.css";
 import { NavBar } from "../components/NavBar";
 
 export const metadata = {
-  title: "Induction Motor Digital Twin",
+  title: "Motor Digital Twin",
   description: "Digital twin prototype built with Next.js + R3F",
 };
 
