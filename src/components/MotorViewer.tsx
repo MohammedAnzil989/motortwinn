@@ -363,7 +363,7 @@
 "use client";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Html } from "@react-three/drei";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import * as THREE from "three";
 import { GLTF } from "three-stdlib";
 import { useMotorStore } from "../app/store/useMotorStore";
@@ -375,14 +375,13 @@ type GLTFResult = GLTF & {
 };
 
 export default function MotorViewer() {
-  const {
-    isMotorRunning,
-    telemetry,
-    sensorFaults,
-    setIsMotorRunning,
-    fetchMotorData,
-    clearSensorFaults
-  } = useMotorStore();
+  // Selectors avoid assuming a specific MotorState shape; use `any` as a safe fallback
+  const isMotorRunning = useMotorStore((state: any) => state.isMotorRunning ?? state.isRunning ?? state.running ?? false);
+  const telemetry = useMotorStore((state: any) => state.telemetry);
+  const sensorFaults = useMotorStore((state: any) => state.sensorFaults);
+  const setIsMotorRunning = useMotorStore((state: any) => state.setIsMotorRunning ?? state.setRunning ?? (() => {}));
+  const fetchMotorData = useMotorStore((state: any) => state.fetchMotorData ?? (() => {}));
+  const clearSensorFaults = useMotorStore((state: any) => state.clearSensorFaults ?? (() => {}));
 
   // 📈 Fetch data periodically when motor is running
   useEffect(() => {
@@ -473,7 +472,7 @@ export default function MotorViewer() {
         label="Speed"
         value={`${telemetry.speed} RPM`}
         color="blue"
-        hasFault={sensorFaults.some(f => f.sensor === 'speed')}
+        hasFault={sensorFaults.some((f: { sensor: string; }) => f.sensor === 'speed')}
       />
 
       {/* Temperature */}
@@ -481,7 +480,7 @@ export default function MotorViewer() {
         label="Temperature"
         value={`${telemetry.temperature}°C`}
         color="orange"
-        hasFault={sensorFaults.some(f => f.sensor === 'temperature')}
+        hasFault={sensorFaults.some((f: { sensor: string; }) => f.sensor === 'temperature')}
       />
 
       {/* Pressure */}
@@ -489,7 +488,7 @@ export default function MotorViewer() {
         label="Pressure"
         value={`${telemetry.pressure} bar`}
         color="purple"
-        hasFault={sensorFaults.some(f => f.sensor === 'pressure')}
+        hasFault={sensorFaults.some((f: { sensor: string; }) => f.sensor === 'pressure')}
       />
 
       {/* Vibration */}
@@ -497,7 +496,7 @@ export default function MotorViewer() {
         label="Vibration"
         value={`${telemetry.vibration} mm/s`}
         color="pink"
-        hasFault={sensorFaults.some(f => f.sensor === 'vibration')}
+        hasFault={sensorFaults.some((f: { sensor: string; }) => f.sensor === 'vibration')}
       />
 
       {/* Load */}
@@ -505,7 +504,7 @@ export default function MotorViewer() {
         label="Load"
         value={`${telemetry.load}%`}
         color="green"
-        hasFault={sensorFaults.some(f => f.sensor === 'load')}
+        hasFault={sensorFaults.some((f: { sensor: string; }) => f.sensor === 'load')}
       />
     </div>
   </div>
@@ -536,7 +535,7 @@ export default function MotorViewer() {
               </div>
               
               <div className="space-y-3">
-                {sensorFaults.map((fault, index) => (
+                {sensorFaults.map((fault: { level: string; sensor: string; message: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: Key | null | undefined) => (
                   <div
                     key={index}
                     className={`
@@ -570,7 +569,7 @@ export default function MotorViewer() {
       )}
 
       {/* Connection Fault Overlay */}
-      {sensorFaults.some(f => f.sensor === 'connection') && (
+      {sensorFaults.some((f: { sensor: string; }) => f.sensor === 'connection') && (
         <div className="absolute inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-gradient-to-br from-red-600 to-red-700 text-white p-6 sm:p-8 rounded-2xl border-4 border-white shadow-2xl max-w-md w-full text-center">
             <div className="text-4xl sm:text-5xl mb-4 animate-pulse">🔴</div>
